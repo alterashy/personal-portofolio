@@ -1,7 +1,7 @@
 ---
 import { createDbClient, techStack } from '@portfolio/db';
 import { desc } from 'drizzle-orm';
-import StackIcon from "tech-stack-icons";
+const techIconUrl = (name: string) => `https://cdn.jsdelivr.net/npm/tech-stack-icons@3.7.1/images/${name}.svg`;
 
 const dbUrl = import.meta.env.DATABASE_URL || process.env.DATABASE_URL || '';
 const db = createDbClient(dbUrl);
@@ -38,11 +38,11 @@ const categories = Object.keys(groupedTech);
           {groupedTech[cat].map((item) => (
             <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-colors">
               {item.icon && (
-                item.icon.includes('/') || item.icon.startsWith('http') ? (
-                  <img src={item.icon} alt={item.name} class="w-6 h-6 object-contain rounded bg-white/10 p-0.5" />
-                ) : (
-                  <StackIcon name={item.icon as any} className="w-6 h-6 object-contain rounded bg-white/10 p-0.5" />
-                )
+                <img
+                  src={item.icon.includes('/') || item.icon.startsWith('http') ? item.icon : techIconUrl(item.icon)}
+                  alt={item.name}
+                  class="w-6 h-6 object-contain rounded bg-white/10 p-0.5"
+                />
               )}
               <span class="text-sm font-semibold text-slate-200">{item.name}</span>
             </div>
