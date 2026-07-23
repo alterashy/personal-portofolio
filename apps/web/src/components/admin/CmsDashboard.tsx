@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TipTapEditor } from "./TipTapEditor";
-import StackIcon from "tech-stack-icons";
+const techIconUrl = (name: string) => `https://cdn.jsdelivr.net/npm/tech-stack-icons@3.7.1/images/${name}.svg`;
 
 type TabType = "posts" | "projects" | "products" | "tech" | "experience";
 
@@ -366,7 +366,7 @@ export const CmsDashboard = () => {
 											{(editingItem.coverImage || editingItem.icon) && (
 												<div className="mt-2 relative rounded-lg overflow-hidden border border-white/10 h-24 bg-black/50 flex items-center justify-center">
 													{activeTab === "tech" && editingItem.icon && !editingItem.icon.includes('/') && !editingItem.icon.startsWith('http') ? (
-														<StackIcon name={editingItem.icon} className="h-12 w-12 object-contain" />
+														<img src={techIconUrl(editingItem.icon)} alt={editingItem.icon} className="h-12 w-12 object-contain" />
 													) : (
 														<img
 															src={editingItem.coverImage || editingItem.icon}

@@ -30,8 +30,7 @@
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss": "^4.0.0",
-    "tailwindcss-animate": "^1.0.7",
-    "tech-stack-icons": "^3.7.1"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.64",
