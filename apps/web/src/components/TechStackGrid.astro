@@ -1,7 +1,7 @@
 ---
 import { createDbClient, techStack } from '@portfolio/db';
 import { desc } from 'drizzle-orm';
-const techIconUrl = (name: string) => `https://cdn.jsdelivr.net/npm/tech-stack-icons@3.7.1/images/${name}.svg`;
+const techIconUrl = (name: string) => `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${name}/${name}-original.svg`;
 
 const dbUrl = import.meta.env.DATABASE_URL || process.env.DATABASE_URL || '';
 const db = createDbClient(dbUrl);

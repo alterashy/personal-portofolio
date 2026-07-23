@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TipTapEditor } from "./TipTapEditor";
-const techIconUrl = (name: string) => `https://cdn.jsdelivr.net/npm/tech-stack-icons@3.7.1/images/${name}.svg`;
+const techIconUrl = (name: string) => `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${name}/${name}-original.svg`;
 
 type TabType = "posts" | "projects" | "products" | "tech" | "experience";
 
