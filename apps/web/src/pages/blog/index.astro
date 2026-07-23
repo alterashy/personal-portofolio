@@ -1,0 +1,52 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { createDbClient, posts } from '@portfolio/db';
+import { desc, eq } from 'drizzle-orm';
+
+const dbUrl = import.meta.env.DATABASE_URL || process.env.DATABASE_URL || '';
+const db = createDbClient(dbUrl);
+
+const allPosts = await db.select()
+  .from(posts)
+  .where(eq(posts.published, true))
+  .orderBy(desc(posts.publishedAt));
+
+// Simple read time calculation
+const calculateReadTime = (content: string) => {
+  const words = content.replace(/<[^>]*>?/gm, '').split(/\s+/).length;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return `${mins} min read`;
+};
+---
+
+<Layout title="Blog & Articles | Personal Portfolio" description="Thoughts on software engineering, web performance, and modern tech stacks.">
+  <div class="py-8">
+    <h1 class="text-4xl font-extrabold tracking-tight mb-2">Blog & Engineering Notes</h1>
+    <p class="text-slate-400 mb-8">Deep dives into full-stack development, performance tuning, and software architecture.</p>
+
+    <div class="flex flex-col gap-6">
+      {allPosts.length === 0 ? (
+        <p class="text-slate-400 py-8 text-center">No posts published yet.</p>
+      ) : allPosts.map((post) => (
+        <article class="glass-card rounded-2xl p-6 hover:border-purple-500/40 transition-all">
+          <div class="flex items-center gap-3 text-xs text-purple-400 mb-3">
+            <span>
+              {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
+            </span>
+            <span>&bull;</span>
+            <span>{calculateReadTime(post.content || '')}</span>
+          </div>
+          <h2 class="text-2xl font-bold text-white hover:text-purple-300 transition-colors mb-2">
+            <a href={`/blog/${post.slug}`}>{post.title}</a>
+          </h2>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            {post.excerpt}
+          </p>
+          <a href={`/blog/${post.slug}`} class="text-xs font-semibold text-purple-400 hover:text-purple-300 inline-flex items-center gap-1">
+            Read Article &rarr;
+          </a>
+        </article>
+      ))}
+    </div>
+  </div>
+</Layout>

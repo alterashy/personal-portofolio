@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { createDbClient, experiences } from '@portfolio/db';
+import { desc } from 'drizzle-orm';
+
+export const prerender = false;
+
+const dbUrl = import.meta.env.DATABASE_URL || process.env.DATABASE_URL || '';
+const db = createDbClient(dbUrl);
+
+const allExperiences = await db.select().from(experiences).orderBy(desc(experiences.startDate));
+
+const formatDate = (date: Date | null) => {
+  if (!date) return '';
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+};
+---
+
+<Layout title="About Me | Personal Portfolio" description="Learn more about my background, skills, and engineering philosophy.">
+  <div class="py-8 max-w-3xl">
+    <h1 class="text-4xl font-extrabold tracking-tight mb-6">About Me</h1>
+
+    <div class="prose prose-invert text-slate-300 leading-relaxed flex flex-col gap-4 mb-16">
+      <p class="text-lg">
+        Hello! I'm a passionate full-stack developer dedicated to building fast, accessible, and beautifully designed web applications.
+      </p>
+      <p>
+        I specialize in modern JavaScript/TypeScript ecosystems, leveraging tools like <strong class="text-purple-300">Astro</strong>, <strong class="text-purple-300">React</strong>, and <strong class="text-purple-300">Supabase</strong> to deliver performant digital products.
+      </p>
+      <p>
+        When I'm not writing code, you can find me contributing to open-source software, writing technical articles, or exploring the latest developments in cloud-native computing.
+      </p>
+    </div>
+
+    <h2 class="text-3xl font-bold tracking-tight mb-8">Work Experience</h2>
+    
+    <div class="relative border-l border-white/10 ml-3 md:ml-4 space-y-12">
+      {allExperiences.length === 0 ? (
+        <p class="text-slate-400 pl-6">No experience added yet.</p>
+      ) : allExperiences.map((exp) => (
+        <div class="relative pl-8 md:pl-10">
+          {/* Timeline Dot */}
+          <div class="absolute w-4 h-4 bg-purple-500 rounded-full -left-2 top-1.5 border-4 border-black/90"></div>
+          
+          <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-purple-500/20 transition-colors">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
+              <div>
+                <h3 class="text-xl font-bold text-white">{exp.role}</h3>
+                <p class="text-purple-400 font-medium">{exp.company}</p>
+              </div>
+              <span class="text-sm font-semibold px-3 py-1 bg-white/5 rounded-full text-slate-300 border border-white/10 w-fit">
+                {formatDate(exp.startDate)} - {exp.isCurrent ? 'Present' : formatDate(exp.endDate)}
+              </span>
+            </div>
+            {exp.description && (
+              <div class="prose prose-invert prose-sm prose-purple max-w-none text-slate-400 marker:text-purple-500">
+                <Fragment set:html={exp.description} />
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
