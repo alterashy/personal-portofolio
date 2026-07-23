@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { createDbClient, posts } from '@portfolio/db';
+import { eq } from 'drizzle-orm';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/404');
+}
+
+const dbUrl = import.meta.env.DATABASE_URL || process.env.DATABASE_URL || '';
+const db = createDbClient(dbUrl);
+
+const post = await db.select().from(posts).where(eq(posts.slug, slug)).limit(1);
+
+if (post.length === 0 || (!post[0].published && !Astro.cookies.get('sb-access-token'))) {
+  return Astro.redirect('/404'); // Or display a 404 component
+}
+
+const p = post[0];
+
+// Simple read time calculation
+const calculateReadTime = (content: string) => {
+  const words = content.replace(/<[^>]*>?/gm, '').split(/\s+/).length;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return `${mins} min read`;
+};
+---
+
+<Layout title={`${p.title} | Personal Portfolio`} description={p.excerpt}>
+  <article class="py-12 max-w-3xl mx-auto">
+    <header class="mb-10 text-center">
+      <div class="flex items-center justify-center gap-3 text-sm text-purple-400 mb-4">
+        <span>
+          {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Draft'}
+        </span>
+        <span>&bull;</span>
+        <span>{calculateReadTime(p.content || '')}</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+        {p.title}
+      </h1>
+      {p.coverImage && (
+        <div class="mt-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-purple-900/20">
+          <img src={p.coverImage} alt={p.title} class="w-full h-auto object-cover" />
+        </div>
+      )}
+    </header>
+
+    <div class="prose prose-invert prose-purple max-w-none prose-img:rounded-xl prose-a:text-purple-400 hover:prose-a:text-purple-300 transition-all">
+      <Fragment set:html={p.content} />
+    </div>
+  </article>
+</Layout>

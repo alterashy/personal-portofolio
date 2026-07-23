@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ProjectsGrid from '../components/ProjectsGrid.astro';
+import TechStackGrid from '../components/TechStackGrid.astro';
+---
+
+<Layout title="Personal Portfolio & Modern CMS">
+  <HeroSection />
+  <ProjectsGrid featuredOnly={true} />
+  <TechStackGrid />
+</Layout>

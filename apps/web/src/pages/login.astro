@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Admin Login | Personal Portfolio">
+  <div class="min-h-[70vh] flex items-center justify-center py-12">
+    <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+      <!-- Glow background -->
+      <div class="absolute -top-12 -right-12 w-40 h-40 bg-purple-600/20 rounded-full blur-2xl"></div>
+
+      <div class="text-center mb-8">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center font-bold text-xl text-white mx-auto mb-4 shadow-lg shadow-purple-500/30">
+          P
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight">Admin Sign In</h1>
+        <p class="text-xs text-slate-400 mt-1">Authenticate with your Supabase Admin credentials</p>
+      </div>
+
+      <form id="login-form" class="flex flex-col gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            required
+            placeholder="admin@example.com"
+            class="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500/60 text-sm transition-colors"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">Password</label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="••••••••••••"
+            class="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500/60 text-sm transition-colors"
+          />
+        </div>
+
+        <div id="error-message" class="hidden text-xs text-rose-400 bg-rose-950/40 border border-rose-500/30 p-3 rounded-xl"></div>
+
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-purple-600/30 hover:shadow-purple-600/50 transition-all duration-200 mt-2 flex items-center justify-center gap-2"
+        >
+          <span>Sign In to CMS</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMessage.classList.add('hidden');
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Authenticating...';
+
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+    const password = (document.getElementById('password') as HTMLInputElement).value;
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (err) {
+        console.error('Failed to parse JSON response:', text);
+      }
+
+      if (res.ok) {
+        window.location.href = '/admin';
+      } else {
+        errorMessage.innerText = data.error || 'Invalid credentials or authentication failure.';
+        errorMessage.classList.remove('hidden');
+      }
+    } catch (err) {
+      errorMessage.innerText = 'Network error occurred. Please try again.';
+      errorMessage.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Sign In to CMS';
+    }
+  });
+</script>

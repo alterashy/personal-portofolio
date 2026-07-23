@@ -1,0 +1,22 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-auto border-t border-white/10 bg-black/60 backdrop-blur-md py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-purple-600/30 border border-purple-500/30 flex items-center justify-center font-bold text-xs text-purple-300">
+        P
+      </div>
+      <p class="text-sm text-slate-400">
+        &copy; {currentYear} Personal Portfolio. Built with <span class="text-purple-400 font-medium">Astro</span> & <span class="text-indigo-400 font-medium">Supabase</span>.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-6 text-sm text-slate-400">
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="hover:text-purple-400 transition-colors">GitHub</a>
+      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="hover:text-purple-400 transition-colors">Twitter</a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="hover:text-purple-400 transition-colors">LinkedIn</a>
+    </div>
+  </div>
+</footer>
